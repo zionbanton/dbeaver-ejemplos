@@ -1,0 +1,308 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Empresa
+model Empresa {
+  id                    Int      @id @default(autoincrement()) @map("id")
+  nombreComercial       String?  @map("nombre_comercial") @db.VarChar(500)
+  domicilioComercial    String?  @map("domicilio_comercial") @db.VarChar(500)
+  tipoPaquete           String?  @map("tipo_paquete") @db.VarChar(100)
+  idTipoPaquete         Int?     @map("id_tipo_paquete")
+  idGiroComercial       Int?     @map("id_giro_comercial")
+  precioVenta           Decimal? @map("precio_venta") @db.Decimal(18, 4)
+  fechaContratacion     DateTime? @map("fecha_contratacion") @db.Date
+  diaPago               Int?     @map("dia_pago") @default(1) @db.TinyInt
+  diasProrroga          Int?     @map("dias_prorroga") @default(15) @db.TinyInt
+  nombreContacto        String?  @map("nombre_contacto") @db.VarChar(500)
+  telefono              String?  @map("telefono") @db.VarChar(50)
+  email                 String?  @map("email") @db.VarChar(50)
+  idStatus              Int?     @map("id_status") @db.SmallInt
+  observaciones         String?  @map("observaciones") @db.VarChar(500)
+  modulosContratados    String?  @map("modulos_contratados") @db.Text
+  tieneRfc              Boolean? @map("tiene_rfc") @default(false)
+  tieneSucursales       Int?     @map("tiene_sucursales") @db.TinyInt
+  impuestosUtilizados   String?  @map("impuestos_utilizados") @db.Text
+  modoPruebasFactrain   Boolean? @map("modo_pruebas_factrain") @default(false)
+  catalogoProducto1     String?  @map("catalogo_producto1") @db.VarChar(50)
+  catalogoProductos1    String?  @map("catalogo_productos1") @db.VarChar(50)
+  catalogoProducto2     String?  @map("catalogo_producto2") @db.VarChar(50)
+  catalogoProductos2    String?  @map("catalogo_productos2") @db.VarChar(50)
+  logoBase64            String?  @map("logoBase64") @db.MediumText
+  headerPdf             String?  @map("header_pdf") @db.VarChar(20)
+  rgbLineasPdf          String?  @map("rgb_lineas_pdf") @db.VarChar(10)
+  rgbRellenoPdf         String?  @map("rgb_relleno_pdf") @db.VarChar(10)
+  rgbLetrasRellenoPdf   String?  @map("rgb_letras_relleno_pdf") @db.VarChar(10)
+  rgbTextoWeb           String?  @map("rgb_texto_web") @db.VarChar(10)
+  idEmisorFactrain      Int?     @map("_id_emisor_factrain_")
+  labels                String?  @map("labels") @db.Text
+  productosApartadosHrs Int?     @map("productos_apartados_hrs") @db.SmallInt
+  tituloRecoleccionManana String? @map("titulo_recoleccion_manana") @db.VarChar(250)
+  tituloRecoleccionTarde String? @map("titulo_recoleccion_tarde") @db.VarChar(250)
+  latitude              String?  @map("latitude") @db.VarChar(100)
+  longitude             String?  @map("longitude") @db.VarChar(100)
+  apiServers            String?  @map("api_servers") @db.VarChar(5000)
+  mercadoPagoPublicKey  String?  @map("mercado_pago_public_key") @db.VarChar(100)
+  mercadoPagoAccessToken String? @map("mercado_pago_access_token") @db.VarChar(100)
+
+  // Relaciones
+  usuarios    Usuario[]
+  productos   Producto[]
+  nivelesSocioeconomico NivelSocioeconomico[]
+  sucursales Sucursal[]
+  productosServicioPrecio ProductoServicioPrecio[]
+
+  @@map("c_empresa")
+}
+
+// Modelo de Usuario
+model Usuario {
+  idUsuario                    Int      @id @default(autoincrement()) @map("id_usuario")
+  idEmpresa                    Int?     @map("id_empresa")
+  idSucursal                   Int?     @map("id_sucursal") @default(1)
+  username                     String   @map("username") @db.VarChar(50)
+  password                     String   @map("password") @db.VarChar(60)
+  nombre                       String?  @map("nombre") @db.VarChar(100)
+  apellidos                    String?  @map("apellidos") @db.VarChar(200)
+  celular                      String?  @map("celular") @db.VarChar(50)
+  email                        String?  @map("email") @db.VarChar(200)
+  idRol                        Int?     @map("id_rol") @default(1) @db.TinyInt
+  autorizarDescuento           Int?     @map("autorizar_descuento") @default(0) @db.SmallInt
+  autorizarCorte               Int?     @map("autorizar_corte") @default(0) @db.SmallInt
+  visualSetting                String?  @map("visual_setting") @db.Text
+  isInicializado               Int?     @map("is_inicializado") @default(1) @db.TinyInt
+  resetToken                   String?  @map("reset_token") @db.VarChar(100)
+  resetTokenExpiry             Float?   @map("reset_token_expiry")
+  createdAt                    DateTime @default(now()) @map("created_at")
+  updatedAt                    DateTime @updatedAt @map("updated_at")
+  idStatus                     Int?     @map("id_status") @default(1) @db.TinyInt
+  idTarjetaPresentacion        Int?     @map("id_tarjeta_presentacion")
+  idGrado                      Int?     @map("id_grado")
+  idCrmNotificacionType        Int?     @map("id_crm_notificacion_type") @db.TinyInt
+  idCrmCalendar                String?  @map("id_crm_calendar") @db.VarChar(200)
+  crmCalendarAccessToken       String?  @map("crm_calendar_access_token") @db.VarChar(500)
+  crmCalendarRefreshToken      String?  @map("crm_calendar_refresh_token") @db.VarChar(500)
+  crmCalendarTokenExpiry       DateTime? @map("crm_calendar_token_expiry")
+  crmGoogleToken               String?  @map("crm_google_token") @db.VarChar(4000)
+
+  // Relaciones
+  empresa                      Empresa? @relation(fields: [idEmpresa], references: [id])
+
+  @@map("t_usuario")
+}
+
+// Modelo de Producto
+model Producto {
+  idProducto                   Int      @id @default(autoincrement()) @map("id_producto")
+  idProductoTipo               Int?     @map("id_producto_tipo")
+  idEmpresa                    Int?     @map("id_empresa")
+  idSucursal                   Int?     @map("id_sucursal")
+  idLaboratorio                Int?     @map("id_laboratorio")
+  idProveedor                  Int?     @map("id_proveedor")
+  idEstatus                    Int?     @map("id_estatus") @default(1) @db.TinyInt
+  isRenta                      Int?     @map("is_renta") @default(0) @db.SmallInt
+  isComplementoExtra           Int?     @map("is_complemento_extra") @default(0) @db.TinyInt
+  codigo                       String   @map("codigo") @db.VarChar(30)
+  codigoProducto               String?  @map("codigo_producto") @db.VarChar(30)
+  claveProveedor               String?  @map("clave_proveedor") @db.VarChar(30)
+  claveInterna                 String?  @map("clave_interna") @default("") @db.VarChar(30)
+  nombre                       String   @map("nombre") @default("") @db.VarChar(200)
+  slug                         String   @map("slug") @default("") @db.VarChar(150)
+  descripcion                  String   @map("descripcion") @default("") @db.VarChar(5000)
+  especificaciones             String?  @map("especificaciones") @db.Text
+  detalleEnvio                 String?  @map("detalle_envio") @db.Text
+  detalleDevolucion            String?  @map("detalle_devolucion") @db.Text
+  peso                         Decimal? @map("peso") @db.Decimal(18, 4)
+  largo                        Decimal? @map("largo") @db.Decimal(18, 4)
+  ancho                        Decimal? @map("ancho") @db.Decimal(18, 4)
+  alto                         Decimal? @map("alto") @db.Decimal(18, 4)
+  costoCaptura                 Decimal? @map("costo_captura") @db.Decimal(18, 2)
+  costo                        Decimal? @map("costo") @db.Decimal(18, 2)
+  precio                       Decimal? @map("precio") @db.Decimal(18, 2)
+  codigoProveedor              String?  @map("codigo_proveedor") @db.VarChar(30)
+  relevancia                   Int?     @map("relevancia")
+  claveProdSAT                 String?  @map("claveProdSAT") @db.VarChar(10)
+  claveUnidadSAT               String?  @map("claveUnidadSAT") @db.VarChar(5)
+  claveCabms                   String?  @map("clave_cabms") @db.VarChar(10)
+  costoIncluyeIva              Int?     @map("costo_incluye_iva") @default(1) @db.TinyInt
+  idTasaCuotaIva               Int?     @map("id_tasa_cuota_iva") @default(2) @db.TinyInt
+  costoIncluyeIeps             Int?     @map("costo_incluye_ieps") @default(0) @db.TinyInt
+  idTasaCuotaIeps              Int?     @map("id_tasa_cuota_ieps") @db.TinyInt
+  publicadoPorMarketplace      Int?     @map("publicado_por_marketplace") @default(1) @db.TinyInt
+  visibleInEcomerce            Int?     @map("visible_in_ecomerce") @default(1) @db.TinyInt
+  createdAt                    DateTime @default(now()) @map("created_at")
+  updatedAt                    DateTime @updatedAt @map("updated_at")
+  duracionMin                  Int?     @map("duracion_min") @default(60) @db.TinyInt
+  cuentaConInventario          Int?     @map("cuenta_con_inventario") @default(1) @db.SmallInt
+  isBajoPedido                 Int?     @map("is_bajo_pedido") @default(0) @db.SmallInt
+  tiempoProduccion             Int?     @map("tiempo_produccion") @db.TinyInt
+  capacidadProduccion          Int?     @map("capacidad_produccion") @db.TinyInt
+  variacionesConControlPrecio  String?  @map("variacionesConControlPrecio") @db.Text
+  variacionesConControlCantidad String? @map("variacionesConControlCantidad") @db.Text
+  precioLista                  Decimal? @map("precio_lista") @db.Decimal(18, 4)
+  tipoComision                 String?  @map("tipo_comision") @db.VarChar(20)
+  productoComision             Decimal? @map("producto_comision") @db.Decimal(18, 4)
+  productoComisionPorcentaje   Int?     @map("producto_comision_porcentaje") @db.TinyInt
+  rutaPlantillaDocumento       String?  @map("ruta_plantilla_documento") @db.VarChar(500)
+  idProductoCopia              Int?     @map("_id_producto_copia")
+  cantidad                     Decimal? @map("_cantidad") @db.Decimal(18, 2)
+  idAreaProduccion             Int?     @map("id_area_produccion")
+  isPieza                      Int?     @map("is_pieza") @default(1) @db.SmallInt
+  unidadMedida                 String?  @map("unidad_medida") @db.VarChar(15)
+  compraIsPieza                Int?     @map("compra_is_pieza") @default(1) @db.SmallInt
+  compraUnidadMedida           String?  @map("compra_unidad_medida") @db.VarChar(20)
+  compraCantidad               Int?     @map("compra_cantidad")
+  idProductoPadre              Int?     @map("id_producto_padre")
+  idProductoVariacion          Int?     @map("id_producto_variacion")
+
+  // Relaciones
+  empresa                      Empresa? @relation(fields: [idEmpresa], references: [id])
+  productosInventario ProductoInventario[]
+  productosServicioPrecio ProductoServicioPrecio[]
+
+  @@map("c_producto")
+}
+
+model NivelSocioeconomico {
+  id                  Int       @id @default(autoincrement()) @map("id")
+  idEmpresa           Int?      @map("id_empresa")
+  nivelSocioeconomico String?   @map("nivel_socioeconomico") @db.VarChar(100)
+  orden               Int?      @map("orden") @db.SmallInt
+  precioPublico       Int?      @map("precio_publico") @db.TinyInt
+  estatus             Int?      @default(0) @map("estatus") @db.TinyInt
+  porcentajeAumento   Int?      @map("porcentaje_aumento") @db.SmallInt
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  empresa             Empresa?  @relation(fields: [idEmpresa], references: [id])
+  productosServicioPrecio ProductoServicioPrecio[]
+
+  @@map("c_nivel_socioeconomico")
+  @@index([idEmpresa], name: "id_empresa")
+  @@index([estatus], name: "estatus")
+} 
+
+model Sucursal {
+  id                    Int      @id @default(autoincrement()) @map("id")
+  idEmpresa             Int?     @map("id_empresa")
+  nombre                String?  @map("nombre") @db.VarChar(250)
+  slug                  String?  @map("slug") @db.VarChar(250)
+  calle                 String?  @map("calle") @db.VarChar(500)
+  noExt                 String?  @map("no_ext") @db.VarChar(50)
+  noInt                 String?  @map("no_int") @db.VarChar(50)
+  idAsentamiento        Int?     @map("id_asentamiento")
+  colonia               String?  @map("colonia") @db.VarChar(100)
+  localidad             String?  @map("localidad") @db.VarChar(100)
+  codigoPostal          String?  @map("codigo_postal") @db.VarChar(10)
+  ciudad                String?  @map("ciudad") @db.VarChar(100)
+  referenciaDireccion   String?  @map("referencia_direccion") @db.VarChar(300)
+  idPrecioVenta         Int?     @map("id_precio_venta") @db.TinyInt
+  idPais                Int?     @map("id_pais")
+  idEstado              Int?     @map("id_estado") @db.TinyInt
+  idMunicipio           Int?     @map("id_municipio") @db.SmallInt
+  idStatus              Int?     @map("id_status") @default(1) @db.TinyInt
+  sucursalPrincipal     Int?     @map("sucursal_principal") @default(1) @db.TinyInt
+  contactoEncargado     String?  @map("contacto_encargado") @db.VarChar(100)
+  contactoTelefono      String?  @map("contacto_telefono") @db.VarChar(50)
+  idSucursalFactrain    Int?     @map("_id_sucursal_factrain_")
+  tituloSlogan          String?  @map("titulo_slogan") @db.VarChar(120)
+  recoleccionManana     Int?     @map("recoleccion_manana") @default(0) @db.TinyInt
+  tituloRecoleccionManana String? @map("titulo_recoleccion_manana") @db.VarChar(100)
+  recoleccionTarde      Int?     @map("recoleccion_tarde") @default(0) @db.TinyInt
+  tituloRecoleccionTarde String? @map("titulo_recoleccion_tarde") @db.VarChar(100)
+  envioGratis           Int?     @map("envio_gratis") @default(0) @db.TinyInt
+  descripcionCorta      String?  @map("descripcion_corta") @db.VarChar(160)
+  descripcionLarga      String?  @map("descripcion_larga") @db.VarChar(4000)
+  telefonoCelular       String?  @map("telefono_celular") @db.VarChar(50)
+  correoElectronico     String?  @map("correo_electronico") @db.VarChar(50)
+  urlFacebook           String?  @map("url_facebook") @db.VarChar(100)
+  urlLogo               String?  @map("url_logo") @db.VarChar(250)
+  idMpRazonSocial       Int?     @map("id_mp_razon_social")
+  idMpRecoleccionArchivos Int?   @map("id_mp_recoleccion_archivos")
+  idMpInformacionBancaria Int?   @map("id_mp_informacion_bancaria")
+  idEcomUsuario         Int?     @map("id_ecom_usuario")
+  urlTwitter            String?  @map("url_twitter") @db.VarChar(250)
+  urlInstragram         String?  @map("url_instragram") @db.VarChar(250)
+  urlHeaderLogo         String?  @map("url_header_logo") @db.VarChar(250)
+  checkAcuerdo          Int?     @map("check_acuerdo") @default(0) @db.TinyInt
+  urlAcuerdo            String?  @map("url_acuerdo") @db.VarChar(150)
+  latitude              String?  @map("latitude") @db.VarChar(100)
+  longitude             String?  @map("longitude") @db.VarChar(100)
+  comision              Decimal? @map("comision") @db.Decimal(18, 4)
+  modoImpresion         String?  @map("modo_impresion") @db.VarChar(100)
+  totalMesas            Int?     @map("total_mesas")
+  folioCertificacion    Int?     @map("folio_certificacion")
+  numeroPromocion       Int?     @map("numero_promocion")
+  folioAcademia         String?  @map("folio_academia") @db.VarChar(50)
+
+  empresa               Empresa? @relation(fields: [idEmpresa], references: [id])
+  productosInventario   ProductoInventario[]
+  productosServicioPrecio ProductoServicioPrecio[]
+
+  @@map("c_sucursal")
+  @@index([idEmpresa], name: "id_empresa")
+  @@index([idAsentamiento], name: "id_asentamiento")
+  @@index([idEstado], name: "id_estado")
+  @@index([idMunicipio], name: "id_municipio")
+  @@index([idStatus], name: "id_status")
+}
+
+model ProductoInventario {
+  id              Int       @id @default(autoincrement()) @map("id")
+  idProducto      Int?      @map("id_producto")
+  idSucursal      Int?      @map("id_sucursal")
+  idAlmacen       Int?      @map("id_almacen")
+  idUbicacion     Int?      @map("id_ubicacion")
+  cantidad        Decimal?  @map("cantidad") @db.Decimal(18,2) @default(0.00)
+  stockMinimo     Int?      @map("stock_minimo")
+  stockMaximo     Int?      @map("stock_maximo")
+  createdAt       DateTime? @default(now()) @map("created_at")
+  updatedAt       DateTime? @updatedAt @map("updated_at")
+
+  producto        Producto? @relation(fields: [idProducto], references: [idProducto])
+  sucursal        Sucursal? @relation(fields: [idSucursal], references: [id])
+
+  @@map("c_producto_inventario")
+  @@index([idProducto], name: "id_producto")
+  @@index([idSucursal], name: "id_sucursal")
+  @@index([createdAt], name: "created_at")
+  @@index([updatedAt], name: "updated_at")
+}
+
+model ProductoServicioPrecio {
+  id                    Int       @id @default(autoincrement()) @map("id")
+  idProducto            Int?      @map("id_producto")
+  idEmpresa             Int?      @map("id_empresa")
+  idSucursal            Int?      @map("id_sucursal")
+  nivelSocioeconomicoId Int?      @map("nivel_socioeconomico_id")
+  idUnidadMedidaOpcion  Int?      @map("id_unidad_medida_opcion")
+  precioAntesImpuestos  Decimal?  @map("precio_antes_impuestos") @db.Decimal(18,4)
+  iva                   Decimal?  @map("iva") @db.Decimal(18,4)
+  ieps                  Decimal?  @map("ieps") @db.Decimal(18,4)
+  precio                Decimal?  @map("precio") @db.Decimal(18,4)
+  cantidadDe            Int?      @map("cantidad_de")
+  cantidadA             Int?      @map("cantidad_a")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  producto              Producto?           @relation(fields: [idProducto], references: [idProducto])
+  empresa               Empresa?            @relation(fields: [idEmpresa], references: [id])
+  sucursal              Sucursal?           @relation(fields: [idSucursal], references: [id])
+  nivelSocioeconomico   NivelSocioeconomico? @relation(fields: [nivelSocioeconomicoId], references: [id])
+
+  @@map("c_producto_servicio_precio")
+  @@index([nivelSocioeconomicoId], name: "nivel_socioeconomico_id")
+  @@index([idProducto], name: "id_producto")
+  @@index([idEmpresa], name: "id_empresa")
+  @@index([idSucursal], name: "id_sucursal")
+  @@index([createdAt], name: "created_at")
+  @@index([updatedAt], name: "updated_at")
+} 
