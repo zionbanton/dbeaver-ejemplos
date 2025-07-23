@@ -8,10 +8,11 @@ const { cacheMedium, cacheLong, cacheShort } = require('../middleware/cache');
 router.use(generalLimiter);
 
 // Rutas principales de producto con caché
-router.get('/', cacheMedium, productoController.getAll);
+router.get('/cache', cacheShort, productoController.getAll);
+router.get('/', productoController.getAll);
 router.get('/stream', productoController.getAllStream); // Sin caché para streaming
 router.get('/stats', cacheShort, productoController.getStats); // Caché corto para stats
-router.get('/:id', cacheMedium, productoController.getById);
+router.get('/:id',  productoController.getById);
 router.post('/', productoController.create);
 router.put('/:id', productoController.update);
 router.delete('/:id', productoController.delete);
